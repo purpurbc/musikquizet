@@ -19,7 +19,15 @@ let d = new Date();
 
 
 //Authenticate with Spotify API and get access token
-function full_request(client_id, client_secret, playlist_url) {
+function full_request(client_id, client_secret) {
+
+    clear_generated_list();
+    
+    let input_field = document.getElementById("input_spotify_link");
+    let playlist_url = input_field.value;
+    if (input_field.value != "") {
+        input_field.value = "";
+    }
 
     // STEP 1. Authentication (get access token)
 
@@ -134,5 +142,10 @@ function parse_playlist_data(playlist_data) {
         }
     }
    
+}
+
+function clear_generated_list() {
+    let list_field = document.getElementById("p");
+    list_field.innerHTML = 'Generated List:<br>';
 }
 

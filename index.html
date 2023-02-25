@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html>
-  
 <head>
     <title>Spotifylink To List</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/index_style.css">
-    
 </head>
-  
 <body>
- 
-
-    <p id="p">Add here:<br></p>
-    <button onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181', 'https://open.spotify.com/playlist/3HzbmfKUAjuOZUMA6P4F6q?si=91c7536e081f4f31')">Request Data</button>
-    
+    <input type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Link" size="25" minlength="20" maxlength="200" required>
+    <button onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">Request Data</button>
+    <button onclick="clear_generated_list()">Clear</button>
+    <p id="p">Generated List:<br></p>
 </body>
 </html>
-
 <script src="js/spotify_web.js"></script>
