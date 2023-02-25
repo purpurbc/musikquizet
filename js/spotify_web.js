@@ -1,22 +1,12 @@
-
-//Replace with your own Spotify API client ID and client secret
-let client_id= 'c69fdbfb0e20482b85142fb997c14208';
-let client_secret = '05a7149bd02f428ea83927bfa0104181';
 let week = 7;
 let year = 2023;
-let categories = ['Intro(Storstäder)', 'Splash', 'Singles Night', 'Greedy', 'Elements', 'Roadtrip'];
-let songs_per_category = [6,8,6,6,6,8];
-//let num_songs = sum(songs_per_category);
 
-//Kategori https://open.spotify.com/playlist/68alwoOYLRoobdjq4eesrC?si=e200fd801e5a4307
-let playlist_url_v7 = 'https://open.spotify.com/playlist/3HzbmfKUAjuOZUMA6P4F6q?si=91c7536e081f4f31';
-let playlist_url_v3 = 'https://open.spotify.com/playlist/0fAuoyKg2VVHl5rY8vexui?si=449e395dade94d2d';
-
-
-let d = new Date();
-//alert("Today's date is " + d);
-//document.body.innerHTML = "<h1>Today's date is " + d + "</h1>";
-
+function clear_input_field(id) {
+    let input_field = document.getElementById(id);
+    if (input_field.value != "") {
+        input_field.value = "";
+    }
+}
 
 //Authenticate with Spotify API and get access token
 function full_request(client_id, client_secret) {
@@ -25,9 +15,8 @@ function full_request(client_id, client_secret) {
     
     let input_field = document.getElementById("input_spotify_link");
     let playlist_url = input_field.value;
-    if (input_field.value != "") {
-        input_field.value = "";
-    }
+    
+    clear_input_field("input_spotify_link")
 
     // STEP 1. Authentication (get access token)
 
@@ -103,15 +92,18 @@ function get_playlist_data(playlist_url, access_token) {
 
 function parse_playlist_data(playlist_data) {
 
-    var par = document.getElementById("p");
-    var text = document.createTextNode("This just got added");
+    let categories = document.getElementById("list_category_names").getElementsByTagName("li");
+    let songs_per_category = document.getElementById("list_category_sizes").getElementsByTagName("li");
+    console.log(categories);
+    console.log(songs_per_category);
 
-    //par.appendChild(text);
+    var par = document.getElementById("p");
  
     let category = 0;
+    console.log(categories[category].textContent);
     let song = 0;
     par.innerHTML += '<br>Facit MQ v.' + week + ' (' + year + ')<br><br>';
-    par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (songs_per_category[category]*2) + 'p';
+    par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category].textContent) + ': ' + (songs_per_category[category].textContent*2) + 'p';
 
     //Print each track's name and artist
     let i = 0;
@@ -135,8 +127,8 @@ function parse_playlist_data(playlist_data) {
 
         song += 1;
 
-        if (song == songs_per_category[category] && category != songs_per_category.length - 1) {
-            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category]) + ': ' + (songs_per_category[category+1]*2) + 'p';
+        if (song == songs_per_category[category].textContent && category != songs_per_category.length - 1) {
+            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category+1].textContent) + ': ' + (songs_per_category[category+1].textContent*2) + 'p';
             song = 0;
             category += 1;
         }
@@ -147,5 +139,42 @@ function parse_playlist_data(playlist_data) {
 function clear_generated_list() {
     let list_field = document.getElementById("p");
     list_field.innerHTML = 'Generated List:<br>';
+}
+
+function add_category() {
+
+    var category_names_list = document.getElementById("list_category_names");
+    var category = document.getElementById("category_name");
+    var li = document.createElement("li");
+    li.setAttribute('id', category.value);
+    li.appendChild(document.createTextNode(category.value));
+    category_names_list.appendChild(li);
+
+    var category_sizes_list = document.getElementById("list_category_sizes");
+    var category_size = document.getElementById("category_size");
+    var li2 = document.createElement("li");
+    li2.setAttribute('id', category_size.value);
+    li2.appendChild(document.createTextNode(category_size.value));
+    category_sizes_list.appendChild(li2);
+
+    clear_input_field("category_name")
+    clear_input_field("category_size")
+
+}
+
+function remove_category() {
+
+    var category_names_list = document.getElementById("list_category_names");
+    var category = document.getElementById("category_name");
+    var name = document.getElementById(category.value);
+    var index_to_remove = Array.prototype.indexOf.call(category_names_list.children, name)
+    category_names_list.removeChild(name);
+
+    var category_sizes_list = document.getElementById("list_category_sizes");
+    category_sizes_list.removeChild(category_sizes_list.children[index_to_remove]);
+
+    clear_input_field("category_name")
+    clear_input_field("category_size")
+    
 }
 
