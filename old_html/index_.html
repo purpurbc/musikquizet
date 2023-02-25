@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html>
+  
+<head>
+  <title>Example 3</title>
+  <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+  <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+</head>
+  
+<body>
+ 
+  <div id="msg">Loading page ...</div>
+ 
+  <py-script>
+    import js
+    from js import document
+    from pyodide.http import pyfetch
+    import asyncio
+    
+    async def load_code_from_url(url):
+      try:
+        msg = document.getElementById("msg")
+    
+        response = await pyfetch(url)
+    
+        content = (await response.bytes()).decode('utf-8')
+    
+        if response.status == 200:
+          msg.innerHTML = 'Python loaded'
+          return content
+        else:
+          msg = document.getElementById("msg")
+          msg.innerHTML = response.status
+          return False
+      except Exception as e:
+        msg = document.getElementById("msg")
+        msg.innerHTML = str(e)
+        return False
+    
+    url = 'spotify_web.py'
+    
+    mycode = await load_code_from_url(url)
+    
+    exec(mycode)
+  </py-script>
+</body>
+</html>

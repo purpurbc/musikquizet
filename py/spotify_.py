@@ -1,6 +1,7 @@
 import requests
 import json
 
+
 # Replace with your own Spotify API client ID and client secret
 CLIENT_ID = 'c69fdbfb0e20482b85142fb997c14208'
 CLIENT_SECRET = '05a7149bd02f428ea83927bfa0104181'
@@ -14,14 +15,17 @@ num_songs = sum(songs_per_category)
 playlist_url_v7 = 'https://open.spotify.com/playlist/3HzbmfKUAjuOZUMA6P4F6q?si=91c7536e081f4f31'
 playlist_url_v3 = 'https://open.spotify.com/playlist/0fAuoyKg2VVHl5rY8vexui?si=449e395dade94d2d'
 
+#OLD
 # Authenticate with Spotify API and get access token
 auth_response = requests.post('https://accounts.spotify.com/api/token', {
     'grant_type': 'client_credentials',
     'client_id': CLIENT_ID,
     'client_secret': CLIENT_SECRET,})
-
+print(auth_response)
 auth_response_data = auth_response.json()
+print(auth_response_data)
 access_token = auth_response_data['access_token']
+print(access_token)
 
 # Get playlist ID from Spotify playlist URL
 playlist_url = playlist_url_v3 # input("Enter Spotify playlist URL: ")
@@ -32,13 +36,16 @@ playlist_response = requests.get(f'https://api.spotify.com/v1/playlists/{playlis
 playlist_data = json.loads(playlist_response.content)
 json_pretty_data = json.dumps(playlist_data, indent=4)
 
+
 """# Open a text file in write mode
 with open("data.txt", "w") as file:
     # Write the JSON string to the file
     file.write(json_pretty_data)
 # Close the file
 file.close()"""
+
 def run():
+
     with open("data.txt", mode="w", encoding="utf-8") as file:
 
         category, song = 0, 0
@@ -62,3 +69,6 @@ def run():
         file.write(f'\n\nMAXPOÄNG:{num_songs*2}')
 
     file.close()
+
+if __name__ == "__main__":
+    run()
