@@ -21,9 +21,7 @@
     <button onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">Request Data</button>
     <button onclick="clear_generated_list()">Clear</button>
     
-    <p id="p">Generated List:<br></p>
-
-    <button onclick="add_draggable()" class="buttonClass">
+    <br><button onclick="add_draggable()" class="buttonClass">
       Add Draggable</button>
 
     <div id="draggable_list">
@@ -33,12 +31,12 @@
           CATEGORY</div>
         <div class="size">
           SIZE</div>
-        <button onclick="remove_category()" class="remove_draggable">  
+        <button id="rmv_1_btn" onclick="remove_draggable(this.id)" class="remove_draggable">  
       </div>
 
-   
     </div>
 
+    <p id="p">Generated List:<br></p>
 
 
 </body>

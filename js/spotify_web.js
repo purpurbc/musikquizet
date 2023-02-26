@@ -49,7 +49,7 @@ function full_request(client_id, client_secret) {
     let input_field = document.getElementById("input_spotify_link");
     let playlist_url = input_field.value;
     
-    clear_input_field("input_spotify_link")
+    clear_input_field("input_spotify_link");
 
     // STEP 1. Authentication (get access token)
 
@@ -71,7 +71,7 @@ function full_request(client_id, client_secret) {
         if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
 
             // Print the access token
-            //alert(Http.response['access_token']);
+            alert(Http.response['access_token']);
             //document.body.innerHTML = "<h1>Success1</h1>";
 
             // Go to STEP 2
@@ -111,7 +111,7 @@ function get_playlist_data(playlist_url, access_token) {
         if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
 
             // Print the response 
-            //alert(Http.response['tracks']['items']);
+            alert(Http.response['tracks']['items']);
             //document.body.innerHTML = "<h1>Success2</h1>";
 
             // Go to STEP 3 
@@ -364,10 +364,19 @@ const list = document.getElementById('draggable_list');
 });
 
 
+Element.prototype.remove = function() {
+    this.parentElement.removeChild(this);
+}
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+    for(var i = this.length - 1; i >= 0; i--) {
+        if(this[i] && this[i].parentElement) {
+            this[i].parentElement.removeChild(this[i]);
+        }
+    }
+}
+
 // Add list item to list_category_names and list_category_sizes
 function add_draggable() {
-
-    
 
     var draggable_list = document.getElementById("draggable_list");
 
@@ -386,7 +395,9 @@ function add_draggable() {
     new_size.appendChild(document.createTextNode("Size"));
 
     var new_remove_draggable_btn = document.createElement("button");
-    new_remove_draggable_btn.setAttribute('onclick', "remove_category()");
+    
+    new_remove_draggable_btn.setAttribute('id', "rmv_".concat(draggable_list.childElementCount+1,"_btn"));
+    new_remove_draggable_btn.setAttribute('onclick', "remove_draggable(this.id)");
     new_remove_draggable_btn.setAttribute('class', "remove_draggable");
 
     // Append everything to the draggable container
@@ -411,19 +422,11 @@ function add_draggable() {
 }
 
 // Remove list item from list_category_names and list_category_sizes
-function remove_draggable() {
-
-    var category_names_list = document.getElementById("list_category_names");
-    var category = document.getElementById("category_name");
-    var name = document.getElementById(category.value);
-    var index_to_remove = Array.prototype.indexOf.call(category_names_list.children, name)
-    category_names_list.removeChild(name);
-
-    var category_sizes_list = document.getElementById("list_category_sizes");
-    category_sizes_list.removeChild(category_sizes_list.children[index_to_remove]);
-
+function remove_draggable(id) {
+    var btn = document.getElementById(id);
+    var draggable = btn.parentElement;
+    console.log(draggable.className);
+    draggable.remove();
     // Clear input fields
-    clear_input_field("category_name");
-    clear_input_field("category_size");
 }
 
