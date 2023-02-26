@@ -1,12 +1,45 @@
 let week = 7;
 let year = 2023;
 
+
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+//
+//
+//
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+// Helper functions
+
+// Used to clear the input field of an input-element
 function clear_input_field(id) {
     let input_field = document.getElementById(id);
     if (input_field.value != "") {
         input_field.value = "";
     }
 }
+
+// Used to clear the generated list
+function clear_generated_list() {
+    let list_field = document.getElementById("p");
+    list_field.innerHTML = 'Generated List:<br>';
+}
+
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+//
+//
+//
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+// For handling http requests with the Spotify API
+/**
+ * STEPS:
+ * 1: Authenticate with Spotify API to ge the access token.
+ *      This requires sending a POST request with client ID/SECRET to the API
+ * 2: Use the access token to send a GET request to retrieve the plylist data
+ * 3: Parse the data and create the list
+*/
 
 //Authenticate with Spotify API and get access token
 function full_request(client_id, client_secret) {
@@ -51,7 +84,7 @@ function full_request(client_id, client_secret) {
     Http.send(params);
 }
 
-
+// Retrieve the playlist data with the asccess token
 function get_playlist_data(playlist_url, access_token) {
 
     // STEP 2. Get data from the API
@@ -90,6 +123,7 @@ function get_playlist_data(playlist_url, access_token) {
     Http.send();
 }
 
+// Parse the data and create the list
 function parse_playlist_data(playlist_data) {
 
     let categories = document.getElementById("list_category_names").getElementsByTagName("li");
@@ -133,14 +167,158 @@ function parse_playlist_data(playlist_data) {
             category += 1;
         }
     }
-   
 }
 
-function clear_generated_list() {
-    let list_field = document.getElementById("p");
-    list_field.innerHTML = 'Generated List:<br>';
-}
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+//
+//
+//
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+// For dragging a category element
+// Taken from https://htmldom.dev/drag-and-drop-element-in-a-list/ 26/02/26
+// "Credit where credit's is due"
 
+// The current dragging item
+let draggingEle;
+
+// The current position of mouse relative to the dragging element
+let x = 0;
+let y = 0;
+
+let placeholder;
+let isDraggingStarted = false;
+
+const mouseDownHandler = function (e) {
+    draggingEle = e.target;
+
+    //--------------------------------------------------------------//
+    // My addition
+    // The drag-effect wont be applied to the elements that are inside of the 
+    // elements with the draggable class
+    if( draggingEle.classList.contains("category") || 
+        draggingEle.classList.contains("size") ||
+        draggingEle.classList.contains("remove_draggable")) {
+
+        draggingEle = e.target.parentNode;
+        console.log("Trying to grab a child element! Stop");
+    }
+    //--------------------------------------------------------------//
+
+    // Calculate the mouse position
+    const rect = draggingEle.getBoundingClientRect();
+    x = e.pageX - rect.left;
+    y = e.pageY - rect.top;
+
+    // Attach the listeners to `document`
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+};
+
+const mouseMoveHandler = function (e) {
+
+    const draggingRect = draggingEle.getBoundingClientRect();
+
+    if (!isDraggingStarted) {
+        // Update the flag
+        isDraggingStarted = true;
+
+        // Let the placeholder take the height of dragging element
+        // So the next element won't move up
+        placeholder = document.createElement('div');
+        placeholder.classList.add('placeholder');
+        draggingEle.parentNode.insertBefore(
+            placeholder,
+            draggingEle.nextSibling
+        );
+
+        // Set the placeholder's height
+        placeholder.style.height = `${draggingRect.height}px`;
+    }
+
+    // Set position for dragging element
+    draggingEle.style.position = 'absolute';
+    draggingEle.style.top = `${e.pageY - y}px`;
+    draggingEle.style.left = `${e.pageX - x}px`;
+
+    const prevEle = draggingEle.previousElementSibling;
+    const nextEle = placeholder.nextElementSibling;
+
+    // User moves item to the top
+    if (prevEle && isAbove(draggingEle, prevEle)) {
+        // The current order    -> The new order
+        // prevEle              -> placeholder
+        // draggingEle          -> draggingEle
+        // placeholder          -> prevEle
+        swap(placeholder, draggingEle);
+        swap(placeholder, prevEle);
+        return;
+    }
+
+    // User moves the dragging element to the bottom
+    if (nextEle && isAbove(nextEle, draggingEle)) {
+        // The current order    -> The new order
+        // draggingEle          -> nextEle
+        // placeholder          -> placeholder
+        // nextEle              -> draggingEle
+        swap(nextEle, placeholder);
+        swap(nextEle, draggingEle);
+    }
+};
+
+const mouseUpHandler = function () {
+
+    // Remove the placeholder
+    placeholder && placeholder.parentNode.removeChild(placeholder);
+    // Reset the flag
+    isDraggingStarted = false;
+
+    // Remove the position styles
+    draggingEle.style.removeProperty('top');
+    draggingEle.style.removeProperty('left');
+    draggingEle.style.removeProperty('position');
+
+    x = null;
+    y = null;
+    draggingEle = null;
+
+    // Remove the handlers of `mousemove` and `mouseup`
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    document.removeEventListener('mouseup', mouseUpHandler);
+};
+
+
+
+const isAbove = function (nodeA, nodeB) {
+    // Get the bounding rectangle of nodes
+    const rectA = nodeA.getBoundingClientRect();
+    const rectB = nodeB.getBoundingClientRect();
+
+    return rectA.top + rectA.height / 2 < rectB.top + rectB.height / 2;
+};
+
+const swap = function (nodeA, nodeB) {
+    const parentA = nodeA.parentNode;
+    const siblingA = nodeA.nextSibling === nodeB ? nodeA : nodeA.nextSibling;
+
+    // Move `nodeA` to before the `nodeB`
+    nodeB.parentNode.insertBefore(nodeA, nodeB);
+
+    // Move `nodeB` to before the sibling of `nodeA`
+    parentA.insertBefore(nodeB, siblingA);
+};
+
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+//
+//
+//
+//--------------------------------------------------------------//
+//--------------------------------------------------------------//
+// Old code for creating and adding a category to a list
+
+// Add list item to list_category_names and list_category_sizes
 function add_category() {
 
     var category_names_list = document.getElementById("list_category_names");
@@ -157,11 +335,11 @@ function add_category() {
     li2.appendChild(document.createTextNode(category_size.value));
     category_sizes_list.appendChild(li2);
 
-    clear_input_field("category_name")
-    clear_input_field("category_size")
-
+    clear_input_field("category_name");
+    clear_input_field("category_size");
 }
 
+// Remove list item from list_category_names and list_category_sizes
 function remove_category() {
 
     var category_names_list = document.getElementById("list_category_names");
@@ -173,8 +351,79 @@ function remove_category() {
     var category_sizes_list = document.getElementById("list_category_sizes");
     category_sizes_list.removeChild(category_sizes_list.children[index_to_remove]);
 
-    clear_input_field("category_name")
-    clear_input_field("category_size")
+    clear_input_field("category_name");
+    clear_input_field("category_size");
+}
+
+// Query the list element
+const list = document.getElementById('draggable_list');
+
+// Query all items
+[].slice.call(list.querySelectorAll('.draggable')).forEach(function (item) {
+    item.addEventListener('mousedown', mouseDownHandler);
+});
+
+
+// Add list item to list_category_names and list_category_sizes
+function add_draggable() {
+
     
+
+    var draggable_list = document.getElementById("draggable_list");
+
+    // Create the new draggable container
+    var new_draggable = document.createElement("div");
+    new_draggable.setAttribute('class', "draggable");
+    new_draggable.setAttribute('style', "");
+
+    // Create the div for the category name, size and the button to remove the draggable
+    var new_category = document.createElement("div");
+    new_category.setAttribute('class', "category");
+    new_category.appendChild(document.createTextNode("Category"));
+
+    var new_size = document.createElement("div");
+    new_size.setAttribute('class', "size");
+    new_size.appendChild(document.createTextNode("Size"));
+
+    var new_remove_draggable_btn = document.createElement("button");
+    new_remove_draggable_btn.setAttribute('onclick', "remove_category()");
+    new_remove_draggable_btn.setAttribute('class', "remove_draggable");
+
+    // Append everything to the draggable container
+    new_draggable.appendChild(new_category);
+    new_draggable.appendChild(new_size);
+    new_draggable.appendChild(new_remove_draggable_btn);
+
+    // Append the draggable container to the list
+    draggable_list.appendChild(new_draggable);
+
+    // Query the list element
+    const list = document.getElementById('draggable_list');
+
+    // Query all items
+    [].slice.call(list.querySelectorAll('.draggable')).forEach(function (item) {
+        item.addEventListener('mousedown', mouseDownHandler);
+    });
+
+    // Clear the input fields
+    clear_input_field("category_name");
+    clear_input_field("category_size");
+}
+
+// Remove list item from list_category_names and list_category_sizes
+function remove_draggable() {
+
+    var category_names_list = document.getElementById("list_category_names");
+    var category = document.getElementById("category_name");
+    var name = document.getElementById(category.value);
+    var index_to_remove = Array.prototype.indexOf.call(category_names_list.children, name)
+    category_names_list.removeChild(name);
+
+    var category_sizes_list = document.getElementById("list_category_sizes");
+    category_sizes_list.removeChild(category_sizes_list.children[index_to_remove]);
+
+    // Clear input fields
+    clear_input_field("category_name");
+    clear_input_field("category_size");
 }
 
