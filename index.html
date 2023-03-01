@@ -7,38 +7,38 @@
     <link rel="stylesheet" href="css/index_style.css">
 </head>
 <body>
+  <div class="content">
+    <header>
+      <div class="header_container" >
 
-    <ol id="list_category_names"></ol>
-    <ol id="list_category_sizes"></ol>
-    <input type="text" id="category_name" placeholder="Category" size="10" minlength="20" maxlength="200" required />
-    <input type="text" id="category_size" placeholder="Size" size="1" minlength="1" maxlength="1" required />
-    <button onclick="add_category()" class="buttonClass">
-    Add Category</button>
-    <button onclick="remove_category()" class="buttonClass">
-    Remove Category</button><br><br>
+      </div>  
+    </header>
 
-    <input type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Link" size="25" minlength="20" maxlength="200" required>
-    <button onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">Request Data</button>
-    <button onclick="clear_generated_list()">Clear</button>
-    
-    <br><button onclick="add_draggable()" class="buttonClass">
-      Add Draggable</button>
+    <input class="input_field" type="text" id="category_name" placeholder="Category" size="10" minlength="20" maxlength="200" required />
+    <input class="input_field" type="text" id="category_size" placeholder="Size" size="1" minlength="1" maxlength="1" required />
+    <button onclick="add_category()" class="button">
+    ADD</button>
 
     <div id="draggable_list">
 
-      <div class="draggable">
+      <!-- <div class="draggable">
         <div class="category">
           CATEGORY</div>
         <div class="size">
           SIZE</div>
         <button id="rmv_1_btn" onclick="remove_draggable(this.id)" class="remove_draggable">  
-      </div>
+      </div> -->
 
     </div>
 
+    <input class="input_field" type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Link" size="25" minlength="20" maxlength="200" required>
+    <button class="button button_generate" onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">GENERATE</button>
+    <button class="button button_clear" onclick="clear_generated_list()">CLEAR</button>
+
+    
+
     <p id="p">Generated List:<br></p>
-
-
+  </div>
 </body>
 </html>
 <script src="js/spotify_web.js"></script>

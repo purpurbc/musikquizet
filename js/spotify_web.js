@@ -71,7 +71,7 @@ function full_request(client_id, client_secret) {
         if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
 
             // Print the access token
-            alert(Http.response['access_token']);
+            // alert(Http.response['access_token']);
             //document.body.innerHTML = "<h1>Success1</h1>";
 
             // Go to STEP 2
@@ -111,7 +111,7 @@ function get_playlist_data(playlist_url, access_token) {
         if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
 
             // Print the response 
-            alert(Http.response['tracks']['items']);
+            // alert(Http.response['tracks']['items']);
             //document.body.innerHTML = "<h1>Success2</h1>";
 
             // Go to STEP 3 
@@ -126,23 +126,35 @@ function get_playlist_data(playlist_url, access_token) {
 // Parse the data and create the list
 function parse_playlist_data(playlist_data) {
 
-    let categories = document.getElementById("list_category_names").getElementsByTagName("li");
-    let songs_per_category = document.getElementById("list_category_sizes").getElementsByTagName("li");
+    let draggables = document.getElementById("draggable_list");
+    let categories = [];
+    let num_categories = 0;
+    for (const child of draggables.children) {
+        categories[num_categories] = child.firstElementChild.value;
+        num_categories += 1;
+        
+    }
+    let songs_per_category = [];
+    let counter = 0;
+    for (const child of draggables.children) {
+        songs_per_category[counter] = child.children[1].value;
+        counter += 1;
+    }
     console.log(categories);
     console.log(songs_per_category);
 
     var par = document.getElementById("p");
  
     let category = 0;
-    console.log(categories[category].textContent);
+    console.log(categories[category]);
     let song = 0;
     par.innerHTML += '<br>Facit MQ v.' + week + ' (' + year + ')<br><br>';
-    par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category].textContent) + ': ' + (songs_per_category[category].textContent*2) + 'p';
+    par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (songs_per_category[category]*2) + 'p';
 
     //Print each track's name and artist
     let i = 0;
-    //console.log(playlist_data['tracks']['items'])
-    //console.log(playlist_data['tracks']['items'][i]['track']['artists'][0]['name'])
+    console.log(playlist_data['tracks']['items'])
+    console.log(playlist_data['tracks']['items'][i]['track']['artists'][0]['name'])
     for (const i in playlist_data['tracks']['items']) {
         
         let track_name = playlist_data['tracks']['items'][i]['track']['name'];
@@ -161,8 +173,8 @@ function parse_playlist_data(playlist_data) {
 
         song += 1;
 
-        if (song == songs_per_category[category].textContent && category != songs_per_category.length - 1) {
-            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category+1].textContent) + ': ' + (songs_per_category[category+1].textContent*2) + 'p';
+        if (song == songs_per_category[category] && category != songs_per_category.length - 1) {
+            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (songs_per_category[category+1].textContent*2) + 'p';
             song = 0;
             category += 1;
         }
@@ -186,6 +198,8 @@ let draggingEle;
 // The current position of mouse relative to the dragging element
 let x = 0;
 let y = 0;
+let prev_x = 0; //not in use
+let prev_y = 0;
 
 let placeholder;
 let isDraggingStarted = false;
@@ -210,6 +224,8 @@ const mouseDownHandler = function (e) {
     const rect = draggingEle.getBoundingClientRect();
     x = e.pageX - rect.left;
     y = e.pageY - rect.top;
+    prev_x = x;
+    prev_y = y;
 
     // Attach the listeners to `document`
     document.addEventListener('mousemove', mouseMoveHandler);
@@ -270,7 +286,9 @@ const mouseMoveHandler = function (e) {
 const mouseUpHandler = function () {
 
     // Remove the placeholder
-    placeholder && placeholder.parentNode.removeChild(placeholder);
+    // Check if the placehoplder and its parentnode exist parent
+    // Otherwise, the draggable will be stuck to the mouse if we click it
+    (placeholder && placeholder.parentNode) && placeholder.parentNode.removeChild(placeholder);
     // Reset the flag
     isDraggingStarted = false;
 
@@ -321,20 +339,12 @@ const swap = function (nodeA, nodeB) {
 // Add list item to list_category_names and list_category_sizes
 function add_category() {
 
-    var category_names_list = document.getElementById("list_category_names");
-    var category = document.getElementById("category_name");
-    var li = document.createElement("li");
-    li.setAttribute('id', category.value);
-    li.appendChild(document.createTextNode(category.value));
-    category_names_list.appendChild(li);
+    var category_name = document.getElementById("category_name");
 
-    var category_sizes_list = document.getElementById("list_category_sizes");
     var category_size = document.getElementById("category_size");
-    var li2 = document.createElement("li");
-    li2.setAttribute('id', category_size.value);
-    li2.appendChild(document.createTextNode(category_size.value));
-    category_sizes_list.appendChild(li2);
 
+    add_draggable(category_name.value, category_size.value);
+    
     clear_input_field("category_name");
     clear_input_field("category_size");
 }
@@ -376,7 +386,7 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 }
 
 // Add list item to list_category_names and list_category_sizes
-function add_draggable() {
+function add_draggable(category_name, category_size) {
 
     var draggable_list = document.getElementById("draggable_list");
 
@@ -386,23 +396,31 @@ function add_draggable() {
     new_draggable.setAttribute('style', "");
 
     // Create the div for the category name, size and the button to remove the draggable
-    var new_category = document.createElement("div");
-    new_category.setAttribute('class', "category");
-    new_category.appendChild(document.createTextNode("Category"));
+    var name_input_area = document.createElement("input");
+    name_input_area.setAttribute('type','text');
+    name_input_area.setAttribute('class','category');
+    name_input_area.setAttribute('placeholder','NAME');
+    name_input_area.setAttribute('size','10');
+    name_input_area.setAttribute('value',category_name);
 
-    var new_size = document.createElement("div");
-    new_size.setAttribute('class', "size");
-    new_size.appendChild(document.createTextNode("Size"));
+    var size_input_area = document.createElement("input");
+    size_input_area.setAttribute('type','number');
+    size_input_area.setAttribute('class','category');
+    size_input_area.setAttribute('placeholder','N');
+    size_input_area.setAttribute('id','size_input_area');
+    size_input_area.setAttribute('min','1');
+    size_input_area.setAttribute('max','99');
+    size_input_area.setAttribute('value',category_size);
 
     var new_remove_draggable_btn = document.createElement("button");
-    
     new_remove_draggable_btn.setAttribute('id', "rmv_".concat(draggable_list.childElementCount+1,"_btn"));
     new_remove_draggable_btn.setAttribute('onclick', "remove_draggable(this.id)");
     new_remove_draggable_btn.setAttribute('class', "remove_draggable");
+    new_remove_draggable_btn.appendChild(document.createTextNode("X"));
 
     // Append everything to the draggable container
-    new_draggable.appendChild(new_category);
-    new_draggable.appendChild(new_size);
+    new_draggable.appendChild(name_input_area);
+    new_draggable.appendChild(size_input_area);
     new_draggable.appendChild(new_remove_draggable_btn);
 
     // Append the draggable container to the list
