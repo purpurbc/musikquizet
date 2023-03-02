@@ -10,13 +10,13 @@
   <div class="content">
     <header>
       <div class="header_container" >
-
+        <h1>.mskQzt</h1>
       </div>  
     </header>
 
-    <input class="input_field" type="text" id="category_name" placeholder="Category" size="10" minlength="20" maxlength="200" required />
-    <input class="input_field" type="text" id="category_size" placeholder="Size" size="1" minlength="1" maxlength="1" required />
-    <button onclick="add_category()" class="button">
+    <input class="input_field input_category" type="text" id="category_name" placeholder="Category Name" size="18" minlength="1" maxlength="40" required />
+    <input class="input_field input_size" type="text" id="category_size" placeholder="Size" size="4" minlength="1" maxlength="2" required />
+    <button onclick="add_category()" class="button button_add">
     ADD</button>
 
     <div id="draggable_list">
@@ -31,7 +31,7 @@
 
     </div>
 
-    <input class="input_field" type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Link" size="25" minlength="20" maxlength="200" required>
+    <input class="input_field input_link" type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Playlist Link" size="25" minlength="1" maxlength="400" required>
     <button class="button button_generate" onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">GENERATE</button>
     <button class="button button_clear" onclick="clear_generated_list()">CLEAR</button>
 

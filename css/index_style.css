@@ -1,6 +1,8 @@
 body {
     background-color: #fff;
-    
+    min-width:310px;        /* Suppose you want minimum width of 1000px */
+    width: auto !important;  /* Firefox will set width as auto */
+    width:310px;            /* As IE6 ignores !important it will set width as 1000px; */
 }
 
 .content {
@@ -10,7 +12,7 @@ body {
 }
  
 h1 {
-    color: #000000;
+    color: #333333;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -27,7 +29,7 @@ p {
 
 #draggable_list {
     background-color: #fdfdfd;
-    width: 200px;
+    width: 226px;
     display: flex list-item;
     justify-content: center;
     border: #e2e2e2;
@@ -49,11 +51,9 @@ p {
     font-weight: bolder;
     font-family: Arial, Helvetica, sans-serif;
     background-color: #ffffff;
-    width: 150px;
+    width: 185px;
     margin: 10px;
-    padding: 8px;
-    display: flex;
-    justify-content: center;
+    padding: 8px 5px 8px 5px;
     border-radius: 3px;
     border: #a5a5a5;
     border-style: solid;
@@ -85,7 +85,7 @@ p {
     font-weight: bold;
     font-size:12px;
     font-family: Arial, Helvetica, sans-serif;
-    margin-left: 10px;
+    margin-left: 20px;
     
     cursor: pointer;
 }
@@ -96,9 +96,12 @@ p {
 
 .header_container {
     height: 90px;
-    padding: 30px;
-    margin-bottom: 20px;
+    max-width: 130px;
+    margin: auto;
+    padding: 10px;
 }
+ 
+
 
 .button {
     padding: 6px 14px;
@@ -123,6 +126,8 @@ p {
     color: white;
 }
 
+
+
 .button_generate {
     background-color: rgb(49, 179, 135); 
 }
@@ -145,7 +150,7 @@ p {
 .input_field {
     all: initial;
     font-weight: bold;
-    padding: 6px 14px;
+    padding: 6px 5px;
     color: #444444;
     font-size:9px;
     font-family: Arial, Helvetica, sans-serif;
@@ -156,4 +161,8 @@ p {
     border-width: 1px;
     margin: 2px;
     margin-bottom: 10px;
+}
+
+.input_link {
+    width:234px;
 }

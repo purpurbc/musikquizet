@@ -48,7 +48,10 @@ function full_request(client_id, client_secret) {
     
     let input_field = document.getElementById("input_spotify_link");
     let playlist_url = input_field.value;
-    
+    if (!playlist_url) {
+        return;
+    }
+
     clear_input_field("input_spotify_link");
 
     // STEP 1. Authentication (get access token)
@@ -140,25 +143,25 @@ function parse_playlist_data(playlist_data) {
         songs_per_category[counter] = child.children[1].value;
         counter += 1;
     }
-    console.log(categories);
-    console.log(songs_per_category);
+    //console.log(categories);
+    //console.log(songs_per_category);
 
     var par = document.getElementById("p");
  
     let category = 0;
-    console.log(categories[category]);
+    //console.log(categories[category]);
     let song = 0;
     par.innerHTML += '<br>Facit MQ v.' + week + ' (' + year + ')<br><br>';
     par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (songs_per_category[category]*2) + 'p';
 
     //Print each track's name and artist
     let i = 0;
-    console.log(playlist_data['tracks']['items'])
-    console.log(playlist_data['tracks']['items'][i]['track']['artists'][0]['name'])
+    //console.log(playlist_data['tracks']['items'])
+    //console.log(playlist_data['tracks']['items'][i]['track']['artists'][0]['name'])
     for (const i in playlist_data['tracks']['items']) {
         
         let track_name = playlist_data['tracks']['items'][i]['track']['name'];
-        console.log(track_name);
+        //console.log(track_name);
         let track_artists = '';
         let num_artists = playlist_data['tracks']['items'][i]['track']['artists']['length'];
         for (const artist in playlist_data['tracks']['items'][i]['track']['artists']) {
@@ -168,7 +171,7 @@ function parse_playlist_data(playlist_data) {
                 track_artists += ', '
             }
         }
-        console.log(track_artists);
+        //console.log(track_artists);
         par.innerHTML += '<br>' + (song+1) +'. ' + track_name + ' - ' + track_artists;
 
         song += 1;
@@ -216,7 +219,7 @@ const mouseDownHandler = function (e) {
         draggingEle.classList.contains("remove_draggable")) {
 
         draggingEle = e.target.parentNode;
-        console.log("Trying to grab a child element! Stop");
+        //console.log("Trying to grab a child element! Stop");
     }
     //--------------------------------------------------------------//
 
@@ -399,14 +402,14 @@ function add_draggable(category_name, category_size) {
     var name_input_area = document.createElement("input");
     name_input_area.setAttribute('type','text');
     name_input_area.setAttribute('class','category');
-    name_input_area.setAttribute('placeholder','NAME');
-    name_input_area.setAttribute('size','10');
+    name_input_area.setAttribute('placeholder','Name');
+    name_input_area.setAttribute('size','15');
     name_input_area.setAttribute('value',category_name);
 
     var size_input_area = document.createElement("input");
     size_input_area.setAttribute('type','number');
     size_input_area.setAttribute('class','category');
-    size_input_area.setAttribute('placeholder','N');
+    size_input_area.setAttribute('placeholder','Size');
     size_input_area.setAttribute('id','size_input_area');
     size_input_area.setAttribute('min','1');
     size_input_area.setAttribute('max','99');
@@ -443,7 +446,7 @@ function add_draggable(category_name, category_size) {
 function remove_draggable(id) {
     var btn = document.getElementById(id);
     var draggable = btn.parentElement;
-    console.log(draggable.className);
+    //console.log(draggable.className);
     draggable.remove();
     // Clear input fields
 }
