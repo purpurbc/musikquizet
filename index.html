@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/index_style.css">
 </head>
 <body>
-  <div class="content">
+  <div id="content" class="content">
     <header>
       <div class="header_container" >
         <h1>.mskQzt</h1>
@@ -32,17 +32,21 @@
     </div>
 
     <input class="input_field input_link" type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Playlist Link" size="25" minlength="1" maxlength="400" required>
-    <button class="button button_generate" onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">GENERATE</button>
-    <button class="button button_clear" onclick="clear_generated_list()">CLEAR</button>
-
+    <div id="buttons">
+      <button class="button button_generate" onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">GENERATE</button>
+      <button class="button button_clear" onclick="clear_generated_list()">CLEAR</button>
+      <!--<button id="generate_docx_btn" class="button button_download">DOWNLOAD</button>-->
+    </div>
     
 
     <p id="p">Generated List:<br></p>
   </div>
 </body>
 </html>
-<script src="js/spotify_web.js"></script>
+<script src="./js/spotify_web.js"></script>
+<script src="https://unpkg.com/docx@5.0.2/build/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+      
 
-  
-  
   

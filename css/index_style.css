@@ -126,6 +126,16 @@ p {
     color: white;
 }
 
+.button_download {
+    margin-left: 15px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background-color: rgb(78, 122, 219); 
+}
+
+.button_download:hover {
+    background-color: rgb(109, 122, 196);
+}
 
 
 .button_generate {

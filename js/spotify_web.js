@@ -1,6 +1,36 @@
+
+// Done! A file called 'My Document.docx' will be in your file system.
 let week = 7;
 let year = 2023;
+var generated_text = "";
 
+
+const startDOCX = () => {
+
+    let doc = new docx.Document();
+
+    const all_lines = generated_text.split(/\r?\n/);
+    var paragraphs = [];
+
+    all_lines.forEach((line, i) => {
+        const new_par = new docx.Paragraph({
+            children: [
+                new docx.TextRun({
+                    text: line
+                })
+            ]
+        });
+        paragraphs.push(new_par)
+    });
+
+    doc.addSection({
+        children: paragraphs
+    });
+
+    docx.Packer.toBlob(doc).then( blob => {
+        saveAs(blob, all_lines[0] + '.docx')
+    });
+}
 
 //--------------------------------------------------------------//
 //--------------------------------------------------------------//
@@ -22,7 +52,12 @@ function clear_input_field(id) {
 // Used to clear the generated list
 function clear_generated_list() {
     let list_field = document.getElementById("p");
+
     list_field.innerHTML = 'Generated List:<br>';
+
+    if(document.getElementById('generate_docx_btn')) {
+        document.getElementById('generate_docx_btn').remove();
+    }
 }
 
 //--------------------------------------------------------------//
@@ -45,6 +80,7 @@ function clear_generated_list() {
 function full_request(client_id, client_secret) {
 
     clear_generated_list();
+    generated_text = '';
     
     let input_field = document.getElementById("input_spotify_link");
     let playlist_url = input_field.value;
@@ -52,7 +88,7 @@ function full_request(client_id, client_secret) {
         return;
     }
 
-    clear_input_field("input_spotify_link");
+    //clear_input_field("input_spotify_link");
 
     // STEP 1. Authentication (get access token)
 
@@ -147,13 +183,17 @@ function parse_playlist_data(playlist_data) {
     //console.log(songs_per_category);
 
     var par = document.getElementById("p");
- 
+    
     let category = 0;
     //console.log(categories[category]);
     let song = 0;
     par.innerHTML += '<br>Facit MQ v.' + week + ' (' + year + ')<br><br>';
     par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (songs_per_category[category]*2) + 'p';
+    par.innerHTML += '<br>Låt + Artist';
 
+    generated_text += 'Facit MQ v.' + week + ' (' + year + ')\n\n';
+    generated_text += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (songs_per_category[category]*2) + 'p';
+    generated_text += '\nLåt + Artist';
     //Print each track's name and artist
     let i = 0;
     //console.log(playlist_data['tracks']['items'])
@@ -173,15 +213,40 @@ function parse_playlist_data(playlist_data) {
         }
         //console.log(track_artists);
         par.innerHTML += '<br>' + (song+1) +'. ' + track_name + ' - ' + track_artists;
+        generated_text += '\n' + (song+1) +'. ' + track_name + ' - ' + track_artists;
 
         song += 1;
 
         if (song == songs_per_category[category] && category != songs_per_category.length - 1) {
-            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (songs_per_category[category+1].textContent*2) + 'p';
+            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (songs_per_category[category+1]*2) + 'p';
+            par.innerHTML += '<br>Låt + Artist';
+            generated_text += '\n\nKategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (songs_per_category[category+1]*2) + 'p';
+            generated_text += '\nLåt + Artist';
             song = 0;
             category += 1;
         }
     }
+
+    var max_points = 0;
+    songs_per_category.forEach(item => {
+        max_points += parseInt(item)*2;
+    });
+    
+    par.innerHTML += '<br><br>MAXPOÄNG: '  + max_points + 'p';
+    generated_text += '\n\nMAXPOÄNG: ' + max_points + 'p';
+
+    var content_div = document.getElementById("buttons");
+    var download_docx_btn = document.createElement("button");
+    download_docx_btn.setAttribute('id', "generate_docx_btn");
+    download_docx_btn.setAttribute('class', "button button_download");
+    download_docx_btn.appendChild(document.createTextNode(".docx"));
+
+    // Append everything to the draggable container
+    content_div.appendChild(download_docx_btn);
+
+    document.querySelector('#generate_docx_btn').addEventListener('click', () => {
+        startDOCX();
+    })
 }
 
 //--------------------------------------------------------------//
@@ -309,8 +374,6 @@ const mouseUpHandler = function () {
     document.removeEventListener('mouseup', mouseUpHandler);
 };
 
-
-
 const isAbove = function (nodeA, nodeB) {
     // Get the bounding rectangle of nodes
     const rectA = nodeA.getBoundingClientRect();
@@ -376,10 +439,10 @@ const list = document.getElementById('draggable_list');
     item.addEventListener('mousedown', mouseDownHandler);
 });
 
-
 Element.prototype.remove = function() {
     this.parentElement.removeChild(this);
 }
+
 NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
     for(var i = this.length - 1; i >= 0; i--) {
         if(this[i] && this[i].parentElement) {
@@ -441,6 +504,13 @@ function add_draggable(category_name, category_size) {
     clear_input_field("category_name");
     clear_input_field("category_size");
 }
+
+add_draggable('','6');
+add_draggable('','6');
+add_draggable('','6');
+add_draggable('','6');
+add_draggable('','6');
+add_draggable('','6');
 
 // Remove list item from list_category_names and list_category_sizes
 function remove_draggable(id) {
