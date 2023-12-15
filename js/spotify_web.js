@@ -1,9 +1,16 @@
 
 // Done! A file called 'My Document.docx' will be in your file system.
 let week = 0;
-let year = 2023;
+let year = new Date().getFullYear();
 var generated_text = "";
 
+// Calculate the current week
+const currentDate = new Date();
+const startOfYear = new Date(currentDate.getFullYear(), 0, 1); // January 1st of the current year
+const millisecondsInWeek = 7 * 24 * 60 * 60 * 1000;
+const weekNumber = Math.floor((currentDate - startOfYear) / millisecondsInWeek) + 1;
+
+week = weekNumber;
 
 const startDOCX = () => {
 
@@ -53,7 +60,7 @@ function clear_input_field(id) {
 function clear_generated_list() {
     let list_field = document.getElementById("p");
 
-    list_field.innerHTML = 'Generated List:<br>';
+    list_field.innerHTML = 'Genererad lista:<br>';
 
     if(document.getElementById('generate_docx_btn')) {
         document.getElementById('generate_docx_btn').remove();
@@ -504,17 +511,17 @@ function add_draggable(category_name, category_size, category_options) {
     var name_input_area = document.createElement("input");
     name_input_area.setAttribute('type','text');
     name_input_area.setAttribute('class','category');
-    name_input_area.setAttribute('placeholder','Name');
-    name_input_area.setAttribute('size','8');
+    name_input_area.setAttribute('placeholder','Namn');
+    name_input_area.setAttribute('size','10%');
     name_input_area.setAttribute('value',category_name);
     name_input_area.setAttribute('style',"border-style: solid;border-radius: 3px;border: #E6E6E6;border-style: solid;border-width: 1px;")
 
     var size_input_area = document.createElement("input");
     size_input_area.setAttribute('type','text');
     size_input_area.setAttribute('class','category');
-    size_input_area.setAttribute('placeholder','Size');
+    size_input_area.setAttribute('placeholder','Storlek');
     size_input_area.setAttribute('id','size_input_area');
-    size_input_area.setAttribute('size','1');
+    size_input_area.setAttribute('size','1%');
     size_input_area.setAttribute('minlength','1');
     size_input_area.setAttribute('maxlength','2');
     size_input_area.setAttribute('value',category_size);
@@ -524,8 +531,8 @@ function add_draggable(category_name, category_size, category_options) {
     var categories_input_area = document.createElement("input");
     categories_input_area.setAttribute('type','text');
     categories_input_area.setAttribute('class','category');
-    categories_input_area.setAttribute('placeholder','Song+Artist+...');
-    categories_input_area.setAttribute('size','7');
+    categories_input_area.setAttribute('placeholder','Låt+Artist+...');
+    categories_input_area.setAttribute('size','5%');
     categories_input_area.setAttribute('value',category_options);
     categories_input_area.setAttribute('style',"border-style: solid;border-radius: 3px;border: #E6E6E6;border-style: solid;border-width: 1px;")
 
@@ -560,12 +567,12 @@ function add_draggable(category_name, category_size, category_options) {
     clear_input_field("category_size");
 }
 
-add_draggable('Intro','6','Song+Artist');
-add_draggable('','6','Song+Artist');
-add_draggable('','6','Song+Artist');
-add_draggable('','6','Song+Artist');
-add_draggable('','6','Song+Artist');
-add_draggable('','6','Song+Artist');
+add_draggable('Intro','6','Låt+Artist');
+add_draggable('','6','Låt+Artist');
+add_draggable('','6','Låt+Artist');
+add_draggable('','6','Låt+Artist');
+add_draggable('','6','Låt+Artist');
+add_draggable('','6','Låt+Artist');
 
 // Remove list item from list_category_names and list_category_sizes
 function remove_draggable(id) {
