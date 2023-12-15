@@ -65,6 +65,10 @@ function clear_generated_list() {
     if(document.getElementById('generate_docx_btn')) {
         document.getElementById('generate_docx_btn').remove();
     }
+
+    if(document.getElementById('generate_pptx_btn')) {
+        document.getElementById('generate_pptx_btn').remove();
+    }
 }
 
 //--------------------------------------------------------------//
@@ -278,17 +282,27 @@ function parse_playlist_data(playlist_data) {
     par.innerHTML += '<br><br>MAXPOÄNG: '  + max_points + 'p';
     generated_text += '\n\nMAXPOÄNG: ' + max_points + 'p';
 
-    var content_div = document.getElementById("buttons");
+    var content_div = document.getElementById("buttons_downl");
     var download_docx_btn = document.createElement("button");
     download_docx_btn.setAttribute('id', "generate_docx_btn");
     download_docx_btn.setAttribute('class', "button button_download");
-    download_docx_btn.appendChild(document.createTextNode(".docx"));
+    download_docx_btn.appendChild(document.createTextNode("facit"));
+
+    var download_pptx_btn = document.createElement("button");
+    download_pptx_btn.setAttribute('id', "generate_pptx_btn");
+    download_pptx_btn.setAttribute('class', "button button_download_pptx");
+    download_pptx_btn.appendChild(document.createTextNode("powerpoint"));
 
     // Append everything to the draggable container
     content_div.appendChild(download_docx_btn);
+    content_div.appendChild(download_pptx_btn);
 
     document.querySelector('#generate_docx_btn').addEventListener('click', () => {
         startDOCX();
+    })
+
+    document.querySelector('#generate_pptx_btn').addEventListener('click', () => {
+        createPresentation();
     })
 }
 
@@ -512,7 +526,7 @@ function add_draggable(category_name, category_size, category_options) {
     name_input_area.setAttribute('type','text');
     name_input_area.setAttribute('class','category');
     name_input_area.setAttribute('placeholder','Namn');
-    name_input_area.setAttribute('size','10%');
+    name_input_area.setAttribute('size','25');
     name_input_area.setAttribute('value',category_name);
     name_input_area.setAttribute('style',"border-style: solid;border-radius: 3px;border: #E6E6E6;border-style: solid;border-width: 1px;")
 
@@ -532,7 +546,7 @@ function add_draggable(category_name, category_size, category_options) {
     categories_input_area.setAttribute('type','text');
     categories_input_area.setAttribute('class','category');
     categories_input_area.setAttribute('placeholder','Låt+Artist+...');
-    categories_input_area.setAttribute('size','5%');
+    categories_input_area.setAttribute('size','25');
     categories_input_area.setAttribute('value',category_options);
     categories_input_area.setAttribute('style',"border-style: solid;border-radius: 3px;border: #E6E6E6;border-style: solid;border-width: 1px;")
 
@@ -583,3 +597,231 @@ function remove_draggable(id) {
     // Clear input fields
 }
 
+
+
+let num_songs_per_category = [2,2]; //[6,6,6,6,6,6];
+
+//13.3 x 7.5 inches
+let LAYOUT_WIDE_x = 13.3;
+let LAYOUT_WIDE_y = 7.5;
+
+let slide_center_x = LAYOUT_WIDE_x / 2;
+let slide_center_y = LAYOUT_WIDE_y / 2;
+
+function calc_center_xy(width,ratio) {
+    let x = slide_center_x - width / 2
+    let y = slide_center_y - (width*ratio) / 2
+    return [x,y];
+}
+
+function addCenteredText(slide, text, fontSize, verticalPos) {
+    let textOpts = {
+        x: 0,
+        y: verticalPos,
+        w: LAYOUT_WIDE_x,
+        h: 1,
+        align: 'center',
+        fontSize: fontSize
+    };
+    slide.addText(text, textOpts);
+}
+
+function createPresentation() {
+
+    // Create a new presentation
+    let pptx = new PptxGenJS();
+    pptx.layout = 'LAYOUT_WIDE';
+
+    //=========================================================
+    // BEGINNING - All Black Slide
+
+    // Add an all-black slide as the beginning
+    let slideBeginning = pptx.addSlide();
+    slideBeginning.background = { fill: '000000' }; // Set background color to black
+
+    //=========================================================
+
+
+    //=========================================================
+    // INTRO
+
+    // Add an Intro Slide
+    let slideIntro = pptx.addSlide();
+    slideIntro.background = { path: "./images/background_1.png" };
+
+    let logga_ratio = 1152 / 3099;
+    let logga_width = 9;
+    let logga_xy = calc_center_xy(logga_width,logga_ratio);
+
+    let fbinsta_width = 0.8;
+    let fbinsta_xy = [LAYOUT_WIDE_x - fbinsta_width - 0.1, 0.1]
+
+    slideIntro.addImage({ path: "./images/musikquizet_logga.png", x: logga_xy[0], y: logga_xy[1], w: logga_width, h:logga_width*logga_ratio});
+    slideIntro.addImage({ path: "./images/fb_insta.png", x: fbinsta_xy[0], y: fbinsta_xy[1], w: fbinsta_width, h:fbinsta_width*0.7});
+    slideIntro.addText("@Musikquizet.tb", { x: fbinsta_xy[0] - 2.4, y: 0, w: 2.6, h:fbinsta_width*0.8, ...{ fontSize: 22, color: 'FFFFFF' } });
+
+    //=========================================================
+
+
+    //=========================================================
+    // RULES
+
+    // Add a Rules Slide
+    let slideRules = pptx.addSlide();
+    slideRules.background = { path: "./images/background_1.png" };
+
+    // Define text style and margin for the Rules section
+    let rulesTextStyle = { align: 'left', fontSize: 26, color: 'FFFFFF', margin: 10 };
+    let rulesMarginLeft = 1.5; // Margin from the left edge
+    let rulesSpacing = 1.4; // Vertical space between each rule
+
+    // Add header text
+    slideRules.addText("Regler / Rules", { x: rulesMarginLeft, y: 1, w: LAYOUT_WIDE_x - 2 * rulesMarginLeft, h: 0.5, ...rulesTextStyle, ...{ fontSize: 41, color: 'faecc3' }});
+
+    // Add rule texts
+    let rulesTexts = [
+        "Rule 1: Fem (5) deltagare per lag. Five (5) people per team.",
+        "Rule 2: Lämna in svarsformulären och era PENNOR på scenen under sista låten. Hand in your answer sheets and PENCILS during the last song of the night.",
+        "Rule 3: Att fuska är INTE OKEJ! Everytime you cheat, a baby panda dies.",
+        "Rule 4: Förstaplats vinner matbiljetter! 1st place wins food tickets to Kåren!"];
+    for (let i = 0; i < rulesTexts.length; i++) {
+        slideRules.addText(rulesTexts[i], { x: rulesMarginLeft, y: 1.4 + i * rulesSpacing, w: LAYOUT_WIDE_x - 2 * rulesMarginLeft, h: rulesSpacing, ...rulesTextStyle });
+    }
+
+    //=========================================================
+
+
+    //=========================================================
+    // MIDDLE
+
+    let draggables = document.getElementById("draggable_list");
+
+    let categories = [];
+    let num_categories = 0;
+    for (const child of draggables.children) {
+        categories[num_categories] = child.firstElementChild.value;
+        num_categories += 1;
+    }
+
+    let songs_per_category = [];
+    let counter = 0;
+    for (const child of draggables.children) {
+        songs_per_category[counter] = child.children[1].value;
+        counter += 1;
+    }
+
+    let num_options = [];
+    let options = [];
+    let cur_options = ""
+    let options_c = 0
+    for (const child of draggables.children) {
+
+        let num_opt = 0;
+        cur_options = child.children[2].value;
+        for (let i = 0; i < cur_options.length; i++) {
+            if (cur_options[i] === "+") {
+                num_opt++;
+            }
+        }
+        num_options[options_c] = num_opt + 1;
+        options[options_c] = cur_options
+        options_c += 1
+    }
+
+    // Define text styles for different text sizes
+    let superBigTextStyle = { align: 'center', fontSize: 90, color: 'faecc3' };
+    let veryBigTextStyle = { align: 'center', fontSize: 41, color: 'faecc3' };
+    let bigTextStyle = { align: 'center', fontSize: 34, color: 'faecc3' };
+    let mediumTextStyle = { align: 'center', fontSize: 22, color: 'FFFFFF' };
+    let smallTextStyle = { align: 'center', fontSize: 18, color: 'FFFFFF' };
+
+    // Define the position and dimensions for the texts
+    let textWidth = 10;
+    let textHeight = 1;
+    let textYOffset = 1; // Starting Y position for the first text
+    let textYIncrement = 1.2; // Vertical space between texts
+
+    // Add middle slides
+    let slideNumber = 1; // Slide number within each category
+    for (let category = 0; category < songs_per_category.length; category++) {
+        for (let i = 0; i < songs_per_category[category]; i++) {
+            let slide = pptx.addSlide();
+            slide.background = { path: "./images/background_1.png" };
+
+            // Add category header
+            let categoryText = "KATEGORI " + (category + 1) + ": " + categories[category];
+            slide.addText(categoryText, { x: slide_center_x - textWidth / 2, y: textYOffset, w: textWidth, h: textHeight, ...veryBigTextStyle });
+
+            // Add other texts
+            slide.addText("(" + options[category] + ")", { x: slide_center_x - textWidth / 2, y: textYOffset + 0.5, w: textWidth, h: textHeight, ...mediumTextStyle });
+            slide.addText("Låt: " + (i+1), { x: slide_center_x - textWidth / 2, y: textYOffset + 1.7 * textYIncrement, w: textWidth, h: textHeight, ...superBigTextStyle });
+
+            let fbinsta_xy_down = [LAYOUT_WIDE_x - fbinsta_width - 0.1, LAYOUT_WIDE_y - fbinsta_width*0.8 - 0.1]
+            slide.addImage({ path: "./images/fb_insta.png", x: fbinsta_xy_down[0], y: fbinsta_xy_down[1], w: fbinsta_width, h:fbinsta_width*0.7});
+            slide.addText("@Musikquizet.tb", { x: fbinsta_xy_down[0] - 2.4, y: fbinsta_xy_down[1] + 0.3, w: 2.6, h:fbinsta_xy_down*0.8, ...{ fontSize: 22, color: 'FFFFFF' } });
+
+            let mini_logga_width = 2.6;
+            let minilogga_xy = [LAYOUT_WIDE_x - mini_logga_width - 0.1, 0.1]
+            slide.addImage({ path: "./images/musikquizet_logga.png", x: minilogga_xy[0], y: minilogga_xy[1], w: mini_logga_width, h:logga_ratio * mini_logga_width});
+
+            if (category == 0)
+            {
+                let guess_text = "Gissa kategorins tema och rita det för en chans till 5 extra poäng! Guess this category’s theme and illustrate it for a chance of winning 5 extra points!";
+                slide.addText(guess_text, { x: slide_center_x - 8.4 / 2, y: textYOffset + 3 * 1.3, w: 8.4, h: textHeight, ...mediumTextStyle });
+                slide.addText("Låt kreativiteten flöda!", { x: slide_center_x - textWidth / 2, y: textYOffset + 3 * 1.3 + 1.0, w: textWidth, h: textHeight, ...bigTextStyle });
+            }
+
+            slideNumber++;
+        }
+        slideNumber = 1; // Reset slide number for next category
+    }
+
+    //=========================================================
+
+
+    //=========================================================
+    // WE WILL BE BACK
+
+    // Add an End Slide
+    let slideThanks = pptx.addSlide();
+    slideThanks.background = { path: "./images/background_1.png" };
+
+    // Add category header
+    slideThanks.addText("Vi kommer tillbaka med ett resultat", { x: slide_center_x - textWidth / 2, y: textYOffset, w: textWidth, h: textHeight, ...veryBigTextStyle });
+
+    // Add other texts
+    slideThanks.addText("We will return with the results at", { x: slide_center_x - textWidth / 2, y: textYOffset + 0.5, w: textWidth, h: textHeight, ...mediumTextStyle });
+    slideThanks.addText("kl.21:30", { x: slide_center_x - textWidth / 2, y: textYOffset + 1.7 * textYIncrement, w: textWidth, h: textHeight, ...superBigTextStyle });
+
+    slideThanks.addText("Ni hittar veckans facit på vår facebooksida!", { x: slide_center_x - textWidth / 2, y: textYOffset + 3.3 * textYIncrement, w: textWidth, h: textHeight, ...mediumTextStyle });
+    slideThanks.addText("@Musikquizet.tb", { x: slide_center_x - textWidth / 2, y: textYOffset + 3.7 * textYIncrement, w: textWidth, h: textHeight, ...bigTextStyle });
+
+    let fbinsta_xy_down = [LAYOUT_WIDE_x - fbinsta_width - 0.1, LAYOUT_WIDE_y - fbinsta_width*0.8 - 0.1]
+    slideThanks.addImage({ path: "./images/fb_insta.png", x: fbinsta_xy_down[0], y: fbinsta_xy_down[1], w: fbinsta_width, h:fbinsta_width*0.7});
+    slideThanks.addText("@Musikquizet.tb", { x: fbinsta_xy_down[0] - 2.4, y: fbinsta_xy_down[1] + 0.3, w: 2.6, h:fbinsta_xy_down*0.8, ...{ fontSize: 22, color: 'FFFFFF' } });
+
+    let mini_logga_width = 2.6;
+    let minilogga_xy = [LAYOUT_WIDE_x - mini_logga_width - 0.1, 0.1]
+    slideThanks.addImage({ path: "./images/musikquizet_logga.png", x: minilogga_xy[0], y: minilogga_xy[1], w: mini_logga_width, h:logga_ratio * mini_logga_width});
+
+
+    //=========================================================
+
+
+    //=========================================================
+    // THE VERY END
+
+    // Add an Intro Slide
+    let slideEnd = pptx.addSlide();
+    slideEnd.background = { path: "./images/background_1.png" };
+
+    slideEnd.addImage({ path: "./images/musikquizet_logga.png", x: logga_xy[0], y: logga_xy[1], w: logga_width, h:logga_width*logga_ratio});
+    slideEnd.addImage({ path: "./images/fb_insta.png", x: fbinsta_xy[0], y: fbinsta_xy[1], w: fbinsta_width, h:fbinsta_width*0.7});
+    slideEnd.addText("@Musikquizet.tb", { x: fbinsta_xy[0] - 2.4, y: 0, w: 2.6, h:fbinsta_width*0.8, ...{ fontSize: 22, color: 'FFFFFF' } });
+
+    //=========================================================
+
+
+    // Save the Presentation
+    pptx.writeFile({ fileName:  'Presentation MQ v.' + week + ' (' + year + ')'});
+}

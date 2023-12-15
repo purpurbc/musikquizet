@@ -127,7 +127,8 @@ p {
 }
 
 .button_download {
-    margin-left: 15px;
+    margin-left: 2px;
+    margin-right: 10px;
     padding: 6px 8px;
     border-radius: 4px;
     background-color: rgb(78, 122, 219);
@@ -135,6 +136,18 @@ p {
 
 .button_download:hover {
     background-color: rgb(109, 122, 196);
+}
+
+.button_download_pptx {
+    margin-left: 2px;
+    margin-right: 10px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background-color: rgb(219, 99, 78);
+}
+
+.button_download_pptx:hover {
+    background-color: rgb(196, 134, 131);
 }
 
 
