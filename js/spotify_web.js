@@ -1,6 +1,6 @@
 
 // Done! A file called 'My Document.docx' will be in your file system.
-let week = 7;
+let week = 0;
 let year = 2023;
 var generated_text = "";
 
@@ -81,7 +81,7 @@ function full_request(client_id, client_secret) {
 
     clear_generated_list();
     generated_text = '';
-    
+
     let input_field = document.getElementById("input_spotify_link");
     let playlist_url = input_field.value;
     if (!playlist_url) {
@@ -92,7 +92,7 @@ function full_request(client_id, client_secret) {
 
     // STEP 1. Authentication (get access token)
 
-    // Create a new http request 
+    // Create a new http request
     const Http = new XMLHttpRequest();
 
     // Specify the type of response we want back
@@ -128,19 +128,19 @@ function get_playlist_data(playlist_url, access_token) {
 
     // STEP 2. Get data from the API
 
-    // Create a new http request 
+    // Create a new http request
     const Http = new XMLHttpRequest();
 
     // Specify the type of response we want back
     Http.responseType = 'json';
-  
+
     // Extract the playlist id from the playlist_url
     playlist_id = playlist_url.split('/').pop();
 
     // Assign url and assert the specified method
     const url = 'https://api.spotify.com/v1/playlists/'.concat(playlist_id,'/tracks');
     Http.open("GET", url, true);
-    
+
     //Send the proper header information along with the request
     Http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     Http.setRequestHeader('Authorization', 'Bearer '.concat(access_token));
@@ -149,11 +149,11 @@ function get_playlist_data(playlist_url, access_token) {
     Http.onreadystatechange = () => { // Call a function when the state changes.
         if (Http.readyState === XMLHttpRequest.DONE && Http.status === 200) {
 
-            // Print the response 
+            // Print the response
             // alert(Http.response['tracks']['items']);
             //document.body.innerHTML = "<h1>Success2</h1>";
 
-            // Go to STEP 3 
+            // Go to STEP 3
             return parse_playlist_data(Http.response);
         }
     }
@@ -166,40 +166,67 @@ function get_playlist_data(playlist_url, access_token) {
 function parse_playlist_data(playlist_data) {
 
     let draggables = document.getElementById("draggable_list");
+
     let categories = [];
     let num_categories = 0;
     for (const child of draggables.children) {
         categories[num_categories] = child.firstElementChild.value;
         num_categories += 1;
-        
     }
+
     let songs_per_category = [];
     let counter = 0;
     for (const child of draggables.children) {
         songs_per_category[counter] = child.children[1].value;
         counter += 1;
     }
+
+    let num_options = [];
+    let options = [];
+    let cur_options = ""
+    let options_c = 0
+    for (const child of draggables.children) {
+
+        let num_opt = 0;
+        cur_options = child.children[2].value;
+        for (let i = 0; i < cur_options.length; i++) {
+            if (cur_options[i] === "+") {
+                num_opt++;
+            }
+        }
+        num_options[options_c] = num_opt + 1;
+        options[options_c] = cur_options
+        options_c += 1
+    }
+
     //console.log(categories);
     //console.log(songs_per_category);
 
     var par = document.getElementById("p");
-    
+
     let category = 0;
     //console.log(categories[category]);
     let song = 0;
+    let song_count = 0;
+
     par.innerHTML += '<br>Facit MQ v.' + week + ' (' + year + ')<br><br>';
-    par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (songs_per_category[category]*2) + 'p';
-    par.innerHTML += '<br>Låt + Artist';
+    par.innerHTML += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (num_options[category]*songs_per_category[category]) + 'p';
+    par.innerHTML += '<br>' + options[category]; //Låt + Artist';
 
     generated_text += 'Facit MQ v.' + week + ' (' + year + ')\n\n';
-    generated_text += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (songs_per_category[category]*2) + 'p';
-    generated_text += '\nLåt + Artist';
+    generated_text += 'Kategori ' +  (category+1) + ': ' + (categories[category]) + ': ' + (num_options[category]*songs_per_category[category]) + 'p';
+    generated_text += '\n' + options[category]; // '\nLåt + Artist';
     //Print each track's name and artist
-    let i = 0;
+
+    let num_of_songs = 0;
+    for (let j = 0; j < songs_per_category.length; j++) {
+        num_of_songs += parseInt(songs_per_category[j]);
+    }
+
     //console.log(playlist_data['tracks']['items'])
     //console.log(playlist_data['tracks']['items'][i]['track']['artists'][0]['name'])
     for (const i in playlist_data['tracks']['items']) {
-        
+
         let track_name = playlist_data['tracks']['items'][i]['track']['name'];
         //console.log(track_name);
         let track_artists = '';
@@ -218,20 +245,29 @@ function parse_playlist_data(playlist_data) {
         song += 1;
 
         if (song == songs_per_category[category] && category != songs_per_category.length - 1) {
-            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (songs_per_category[category+1]*2) + 'p';
-            par.innerHTML += '<br>Låt + Artist';
-            generated_text += '\n\nKategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (songs_per_category[category+1]*2) + 'p';
-            generated_text += '\nLåt + Artist';
+            par.innerHTML += '<br><br>Kategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (num_options[category+1]*songs_per_category[category+1]) + 'p';
+            par.innerHTML += '<br>' + options[category+1]; //'<br>Låt + Artist';
+            generated_text += '\n\nKategori ' + (category+2) + ': ' + (categories[category+1]) + ': ' + (num_options[category+1]*songs_per_category[category+1]) + 'p';
+            generated_text += '\n' + options[category+1]; //'\nLåt + Artist';
             song = 0;
             category += 1;
+        }
+
+        song_count += 1;
+        if (num_of_songs == song_count)
+        {
+            break;
         }
     }
 
     var max_points = 0;
+    let max_p_counter = 0;
     songs_per_category.forEach(item => {
-        max_points += parseInt(item)*2;
+        max_points += parseInt(item)*num_options[max_p_counter];
+        max_p_counter += 1;
+
     });
-    
+
     par.innerHTML += '<br><br>MAXPOÄNG: '  + max_points + 'p';
     generated_text += '\n\nMAXPOÄNG: ' + max_points + 'p';
 
@@ -277,9 +313,9 @@ const mouseDownHandler = function (e) {
 
     //--------------------------------------------------------------//
     // My addition
-    // The drag-effect wont be applied to the elements that are inside of the 
+    // The drag-effect wont be applied to the elements that are inside of the
     // elements with the draggable class
-    if( draggingEle.classList.contains("category") || 
+    if( draggingEle.classList.contains("category") ||
         draggingEle.classList.contains("size") ||
         draggingEle.classList.contains("remove_draggable")) {
 
@@ -409,10 +445,13 @@ function add_category() {
 
     var category_size = document.getElementById("category_size");
 
-    add_draggable(category_name.value, category_size.value);
-    
+    var category_options = document.getElementById("category_options");
+
+    add_draggable(category_name.value, category_size.value, category_options.value);
+
     clear_input_field("category_name");
     clear_input_field("category_size");
+    clear_input_field("category_options");
 }
 
 // Remove list item from list_category_names and list_category_sizes
@@ -452,7 +491,7 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 }
 
 // Add list item to list_category_names and list_category_sizes
-function add_draggable(category_name, category_size) {
+function add_draggable(category_name, category_size, category_options) {
 
     var draggable_list = document.getElementById("draggable_list");
 
@@ -466,27 +505,43 @@ function add_draggable(category_name, category_size) {
     name_input_area.setAttribute('type','text');
     name_input_area.setAttribute('class','category');
     name_input_area.setAttribute('placeholder','Name');
-    name_input_area.setAttribute('size','15');
+    name_input_area.setAttribute('size','8');
     name_input_area.setAttribute('value',category_name);
+    name_input_area.setAttribute('style',"border-style: solid;border-radius: 3px;border: #E6E6E6;border-style: solid;border-width: 1px;")
 
     var size_input_area = document.createElement("input");
-    size_input_area.setAttribute('type','number');
+    size_input_area.setAttribute('type','text');
     size_input_area.setAttribute('class','category');
     size_input_area.setAttribute('placeholder','Size');
     size_input_area.setAttribute('id','size_input_area');
-    size_input_area.setAttribute('min','1');
-    size_input_area.setAttribute('max','99');
+    size_input_area.setAttribute('size','1');
+    size_input_area.setAttribute('minlength','1');
+    size_input_area.setAttribute('maxlength','2');
     size_input_area.setAttribute('value',category_size);
+    size_input_area.setAttribute('style',"border-style: solid;border-radius: 3px;border: #E6E6E6;border-style: solid;border-width: 1px;")
+
+
+    var categories_input_area = document.createElement("input");
+    categories_input_area.setAttribute('type','text');
+    categories_input_area.setAttribute('class','category');
+    categories_input_area.setAttribute('placeholder','Song+Artist+...');
+    categories_input_area.setAttribute('size','7');
+    categories_input_area.setAttribute('value',category_options);
+    categories_input_area.setAttribute('style',"border-style: solid;border-radius: 3px;border: #E6E6E6;border-style: solid;border-width: 1px;")
+
 
     var new_remove_draggable_btn = document.createElement("button");
     new_remove_draggable_btn.setAttribute('id', "rmv_".concat(draggable_list.childElementCount+1,"_btn"));
     new_remove_draggable_btn.setAttribute('onclick', "remove_draggable(this.id)");
     new_remove_draggable_btn.setAttribute('class', "remove_draggable");
-    new_remove_draggable_btn.appendChild(document.createTextNode("X"));
+    new_remove_draggable_btn.setAttribute('style', "color:#BE6262;");
+
+    new_remove_draggable_btn.appendChild(document.createTextNode("x"));
 
     // Append everything to the draggable container
     new_draggable.appendChild(name_input_area);
     new_draggable.appendChild(size_input_area);
+    new_draggable.appendChild(categories_input_area);
     new_draggable.appendChild(new_remove_draggable_btn);
 
     // Append the draggable container to the list
@@ -505,12 +560,12 @@ function add_draggable(category_name, category_size) {
     clear_input_field("category_size");
 }
 
-add_draggable('','6');
-add_draggable('','6');
-add_draggable('','6');
-add_draggable('','6');
-add_draggable('','6');
-add_draggable('','6');
+add_draggable('Intro','6','Song+Artist');
+add_draggable('','6','Song+Artist');
+add_draggable('','6','Song+Artist');
+add_draggable('','6','Song+Artist');
+add_draggable('','6','Song+Artist');
+add_draggable('','6','Song+Artist');
 
 // Remove list item from list_category_names and list_category_sizes
 function remove_draggable(id) {

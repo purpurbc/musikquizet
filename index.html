@@ -11,11 +11,12 @@
     <header>
       <div class="header_container" >
         <h1>.mskQzt</h1>
-      </div>  
+      </div>
     </header>
 
-    <input class="input_field input_category" type="text" id="category_name" placeholder="Category Name" size="18" minlength="1" maxlength="40" required />
-    <input class="input_field input_size" type="text" id="category_size" placeholder="Size" size="4" minlength="1" maxlength="2" required />
+    <input class="input_field input_category" type="text" id="category_name" placeholder="Category Name" size="43" minlength="1" maxlength="40" required />
+    <input class="input_field input_size" type="text" id="category_size" placeholder="Size" size="3" minlength="1" maxlength="2" required />
+    <input class="input_field input_size" type="text" id="category_options" placeholder="Song+Artist,..." size="21" minlength="1" maxlength="20" required />
     <button onclick="add_category()" class="button button_add">
     ADD</button>
 
@@ -26,18 +27,18 @@
           CATEGORY</div>
         <div class="size">
           SIZE</div>
-        <button id="rmv_1_btn" onclick="remove_draggable(this.id)" class="remove_draggable">  
+        <button id="rmv_1_btn" onclick="remove_draggable(this.id)" class="remove_draggable">
       </div> -->
 
     </div>
 
-    <input class="input_field input_link" type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Playlist Link" size="25" minlength="1" maxlength="400" required>
+    <input class="input_field input_link" type="text" id="input_spotify_link" on name="link_name" placeholder="Spotify Playlist Link (Cannot be the link from mobile)" size="25" minlength="1" maxlength="400" required>
     <div id="buttons">
       <button class="button button_generate" onclick="full_request('c69fdbfb0e20482b85142fb997c14208', '05a7149bd02f428ea83927bfa0104181')">GENERATE</button>
       <button class="button button_clear" onclick="clear_generated_list()">CLEAR</button>
       <!--<button id="generate_docx_btn" class="button button_download">DOWNLOAD</button>-->
     </div>
-    
+
 
     <p id="p">Generated List:<br></p>
   </div>
@@ -46,7 +47,6 @@
 <script src="./js/spotify_web.js"></script>
 <script src="https://unpkg.com/docx@5.0.2/build/index.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    
-      
 
-  
+
+
