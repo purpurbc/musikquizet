@@ -348,7 +348,8 @@ const mouseDownHandler = function (e) {
     // elements with the draggable class
     if( draggingEle.classList.contains("category") ||
         draggingEle.classList.contains("size") ||
-        draggingEle.classList.contains("remove_draggable")) {
+        draggingEle.classList.contains("remove_draggable") ||
+        draggingEle.classList.contains("move-btn")) {
 
         draggingEle = e.target.parentNode;
         //console.log("Trying to grab a child element! Stop");
