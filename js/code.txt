@@ -13,6 +13,7 @@ const weekNumber = Math.floor((currentDate - startOfYear) / millisecondsInWeek) 
 week = weekNumber;
 
 const startDOCX = () => {
+
     // Show the download status
     document.getElementById('downloadStatus').style.display = 'block';
 
@@ -36,8 +37,9 @@ const startDOCX = () => {
         children: paragraphs
     });
 
-    docx.Packer.toBlob(doc).then( blob => {
-        saveAs(blob, all_lines[0] + '.docx');
+    // After initiating the download, hide the status
+    docx.Packer.toBlob(doc).then(blob => {
+        saveAs(blob, 'filename.docx');
         document.getElementById('downloadStatus').style.display = 'none';
     });
 }
@@ -181,13 +183,6 @@ function parse_playlist_data(playlist_data) {
 
     let draggables = document.getElementById("draggable_list");
 
-    // new_draggable.appendChild(name_input_area);
-    // new_draggable.appendChild(new_remove_draggable_btn); 1
-    // new_draggable.appendChild(categories_input_area); 2
-    // new_draggable.appendChild(size_input_area); 3
-    // new_draggable.appendChild(moveUpBtn);
-    // new_draggable.appendChild(moveDownBtn);
-
     let categories = [];
     let num_categories = 0;
     for (const child of draggables.children) {
@@ -198,7 +193,7 @@ function parse_playlist_data(playlist_data) {
     let songs_per_category = [];
     let counter = 0;
     for (const child of draggables.children) {
-        songs_per_category[counter] = child.children[3].value;
+        songs_per_category[counter] = child.children[1].value;
         counter += 1;
     }
 
@@ -220,13 +215,13 @@ function parse_playlist_data(playlist_data) {
         options_c += 1
     }
 
-    console.log(categories);
-    console.log(songs_per_category);
+    //console.log(categories);
+    //console.log(songs_per_category);
 
     var par = document.getElementById("p");
 
     let category = 0;
-    console.log(categories[category]);
+    //console.log(categories[category]);
     let song = 0;
     let song_count = 0;
 
@@ -757,7 +752,7 @@ function createPresentation() {
     let songs_per_category = [];
     let counter = 0;
     for (const child of draggables.children) {
-        songs_per_category[counter] = child.children[3].value;
+        songs_per_category[counter] = child.children[1].value;
         counter += 1;
     }
 
@@ -871,6 +866,7 @@ function createPresentation() {
     slideEnd.addText("@Musikquizet.tb", { x: fbinsta_xy[0] - 2.4, y: 0, w: 2.6, h:fbinsta_width*0.8, ...{ fontSize: 22, color: 'FFFFFF' } });
 
     //=========================================================
+
 
     // Save the Presentation
     pptx.writeFile({ fileName:  'Presentation MQ v.' + week + ' (' + year + ')'}).then(() => {

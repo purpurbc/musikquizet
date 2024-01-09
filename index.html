@@ -8,24 +8,29 @@
 
 </head>
 <body>
+
   <div id="content" class="content">
     <header>
       <div class="header_container" >
         <h1>.mskQzt</h1>
       </div>
     </header>
-    <p><b>Hej! Så här gör du:</b><br><br>
-      Fyll i <b>namn</b>, <b>antal låtar</b> och <b>svarsalternativ</b> för varje kategori.
-      <b>Lägg till fler</b> kategorier om det behövs, alternativt <b>ta bort</b> kategorier genom att klicka på kryssen.
-      För att <b>ändra ordning</b> kan du dra runt de existerande rutorna (bara på datorn, drag and drop).
-      <br><br>
-      Sen när du är klar så hämtar du <b>länken till din spotifylista(måste vara PUBLIC)</b>, lägger in den i fältet längst ned och <b>klickar generera</b>.
-      Text kommer komma upp längst ned, där du kan <b>granska att allt är rätt</b>.
-      Sen kommer det komma upp två knappar för nedladdning av <b>facit</b>(word) och <b>presentationen</b>(powerpoint).
-      <br><br>
-      <b>NOTERA: klicka bara en gång på nedladdningsknapparna var. Nedladdningen kan ta nån sekund bara. Så spamma inte knappen, då laddas fler ner.</b>
-    </p>
 
+    <div>
+      <p><b>Hej! Så här gör du:</b><br><br>
+        Fyll i <b>namn</b>, <b>antal låtar</b> och <b>svarsalternativ</b> för varje kategori.
+        <b>Lägg till fler</b> kategorier om det behövs, alternativt <b>ta bort</b> kategorier genom att klicka på kryssen.
+        För att <b>ändra ordning</b> kan du dra runt de existerande rutorna (bara på datorn, drag and drop) eller klicka på upp/ner knapparna.
+        <br><br>
+        Sen när du är klar så hämtar du <b>länken till din spotifylista(måste vara OFFENTLIG)</b>, lägger in den i fältet längst ned och <b>klickar generera</b>.
+        Text kommer komma upp längst ned, där du kan <b>granska att allt är rätt</b>.
+        Det kommer finnas två knappar för nedladdning av <b>facit</b>(word) och <b>presentation</b>(powerpoint).
+        <br><br>
+        Det enda som kan behöva göras manuellt med facit är att säkerställa att det är på en sida. Spalter gick ej att fixa.
+        <br><br>
+        <b>Frågeformulär är work in progress...gråt</b>
+      </p>
+    </div>
 
     <input class="input_field input_category" type="text" id="category_name" placeholder="Kategori Namn" size="43" minlength="1" maxlength="43" required />
     <input class="input_field input_size" type="text" id="category_size" placeholder="Storlek" size="3" minlength="1" maxlength="2" required />
@@ -58,7 +63,7 @@
 
 
 
-
+    <p id="downloadStatus" style="display: none;">Downloading...</p>
     <p id="p">Genererad lista:<br></p>
   </div>
 </body>

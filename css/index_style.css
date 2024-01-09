@@ -42,6 +42,20 @@ p {
 
 }
 
+#downloadStatus {
+    color: #282828;
+    background-color: #f8f9fa;
+    border: 2px solid #7a5ce7;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    position: fixed; /* Or absolute, depending on your layout */
+    top: 50%; /* Adjust as needed */
+    left: 50%; /* Adjust as needed */
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* Ensures it appears above other content */
+}
+
 .draggable {
     cursor: move;
     user-select: none;
